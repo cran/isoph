@@ -1,0 +1,10 @@
+31cf802f1fb4017bc49904c355ae4a32 *DESCRIPTION
+ffabaeae04ba4ca50dff0fac2e85a486 *NAMESPACE
+fdfc37be44fb6fc61d33786caf4b3612 *R/isoph.R
+9cbcd05e74933f6c75666b1ef29e9637 *R/isoph.td.R
+00baa13b4b646b78b226a17d5d691d84 *R/isoph.ti.R
+8b61d2e78bf480e9726db876bbfd5546 *R/plot.isoph.R
+1472debf1913d3bd0a93d6b38594fcce *R/print.isoph.R
+3302b4b4ce763ad8bff9eeb84b386222 *man/isoph-package.Rd
+603503eeacba525b09b00ef291a5d177 *man/isoph.Rd
+7010a9c2006c5ef6bae955fffa82d768 *src/isoph.c

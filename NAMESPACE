@@ -1,0 +1,17 @@
+useDynLib(isoph, .registration = TRUE)
+
+importFrom("stats", "model.response", "model.matrix", "model.frame")
+importFrom("graphics", "plot", "points", "legend")
+importFrom("survival", "Surv", "is.Surv", "coxph")
+importFrom("Iso", "pava")
+
+export(isoph, isoph)
+
+S3method(print, isoph, print.isoph)
+S3method(plot, isoph, plot.isoph)
+
+
+
+
+
+
