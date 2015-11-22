@@ -12,9 +12,9 @@ print.isoph=function(x, ...){
   cat(a1.3)
   
   if(x$conv=="converged"){
-    a2=paste("\n\nAlgorithm was ",x$conv," with the number of iterations ",x$iter,".",sep='')
+    a2=paste("\n\nAlgorithm was ",x$conv,".",sep='')
   }else if(x$conv=="not converged"){
-    a2=paste("\n\nAlgorithm K was ",x$conv,". Results were questinable",sep='')
+    a2=paste("\n\nAlgorithm was ",x$conv,". Results were questinable",sep='')
   }
   cat(a2)
 }

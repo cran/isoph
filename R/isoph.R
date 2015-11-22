@@ -27,9 +27,10 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
     shape="increasing"
   }else if(any(grep("dec",tolower(shape)))==TRUE){
     shape="decreasing"
-  }else{
-    stop("shape must be either increasing or decreasing")
   }
+  if(shape!='increasing' && shape!='decreasing')
+    stop("shape must be either increasing or decreasing")
+
   if( !(is.numeric(K)) )       stop("K must be numeric")
   if( !(is.numeric(eps)) )     stop("eps must be numeric")
   if( !(is.numeric(maxiter)) ) stop("maxiter must be be numeric")
@@ -49,7 +50,7 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
   
   if(ncol(surv.y)==2){ #for time-indepnedent
     type='ti'
-    T=surv.y[,1];     STATUS=surv.y[,2]
+    TIME=surv.y[,1];     STATUS=surv.y[,2]
   }else if(ncol(surv.y)==3){ #for time-depnedent (or time-independent)
     type='td'
     START=surv.y[,1]; STOP=surv.y[,2];  STATUS=surv.y[,3]
@@ -63,14 +64,14 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
   #3.2. check data entry
   if(type=='ti'){
     #NA or Inf
-    if ( any(is.na(T)+is.na(STATUS)+is.na(Z)) ) stop("Data included NA")
-    if ( any(is.infinite(T)+is.infinite(STATUS)+is.infinite(Z)) )  stop("Data included infinite values")
+    if ( any(is.na(TIME)+is.na(STATUS)+is.na(Z)) ) stop("Data included NA")
+    if ( any(is.infinite(TIME)+is.infinite(STATUS)+is.infinite(Z)) )  stop("Data included infinite values")
     
     #length
-    if( !(length(T)==length(STATUS) & length(STATUS)==length(Z)) ) stop("Lengths of data in the formula argument are not matched")
+    if( !(length(TIME)==length(STATUS) & length(STATUS)==length(Z)) ) stop("Lengths of data in the formula argument are not matched")
     
     #right censored data
-    if( min(T)<=0 ) stop("Time must be greater than zero")
+    if( min(TIME)<=0 ) stop("Time must be greater than zero")
 
   }else if(type=='td'){
     #NA or Inf
@@ -87,10 +88,12 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
   #Censoring
   if ( length(unique(STATUS))>=3 ) stop("status has to be either 0 or 1")
   if ( !all(STATUS %in% c(0,1)) )  stop("status has to be either 0 or 1")
+  
+  if (sum(STATUS)<=2) stop("At least more than two numbers of event are needed.")
 
   #4. isoph
   if(type=='ti'){
-    est=isoph.ti(T=T, STATUS=STATUS, Z=Z, shape=shape, K=K, maxiter=maxiter, eps=eps, maxdec=maxdec)
+    est=isoph.ti(TIME=TIME, STATUS=STATUS, Z=Z, shape=shape, K=K, maxiter=maxiter, eps=eps, maxdec=maxdec)
   }else if(type=='td'){
     est=isoph.td(START=START, STOP=STOP, STATUS=STATUS, Z=Z, shape=shape, K=K, maxiter=maxiter, eps=eps, maxdec=maxdec)
   }

@@ -1,9 +1,9 @@
-isoph.ti=function(T, STATUS, Z, shape, K, maxiter, eps, maxdec){
+isoph.ti=function(TIME, STATUS, Z, shape, K, maxiter, eps, maxdec){
 
   #sorted by z
   n=length(STATUS)
   order.z=order(Z)
-  t=T[order.z]
+  t=TIME[order.z]
   status=STATUS[order.z]
   z=sort(Z)
   z.obs=unique(z[status==1])
@@ -33,53 +33,24 @@ isoph.ti=function(T, STATUS, Z, shape, K, maxiter, eps, maxdec){
   dN2=matrix(rpa.Y$dN2,m,nt)
   Y2 =matrix(rpa.Y$Y2, m,nt)
   
-  #initial value
+  #initial
   zk=z.obs[k]
   z.bar=z-zk
   
-  beta.hat=coxph(Surv(t,status)~z.bar)$coefficient      
-  if(shape=='increasing'){
-    psi= abs(beta.hat)*(z.obs-zk)
-  }else if(shape=='decreasing'){
-    psi=-abs(beta.hat)*(z.obs-zk)
-  }
+  try(beta<-coxph(Surv(t,status)~z.bar)$coefficient, silent=T)
+  if(!is.numeric(beta)) beta=0.01
   
   #picm
-  conv="not converged"
-  iter=0
-  d.e=1
-  while(d.e>=eps){  
-    iter=iter+1
-    
-    #picm
-    dNsum=colSums(dN2)
-    Delta=rowSums(dN2)     
-    
-    den=colSums(Y2*exp(psi))
-    index.zero=which(den>0) #0/0=0
-    
-    mu=c()
-    for(s in 1:m)
-      mu[s]=sum( (Y2[s,]/den*dNsum)[index.zero] )
-    
-    if(shape=='increasing'){
-      exp.psi.new=pava(Delta/mu, mu)
-    }else if(shape=='decreasing'){
-      exp.psi.new=-pava(-Delta/mu, mu)
-    }
-    psi.new=log(exp.psi.new)    
-    
-    #distance
-    d.e=sum(abs(exp(psi.new)-exp(psi)))
-    psi=psi.new
-    if(iter>maxiter) break
-  }
-  if(d.e<eps) conv="converged"
+  dNsum=colSums(dN2)
+  Delta=rowSums(dN2)     
+  picm=picm.ft(beta,m,z.obs,zk,k, dN2,Y2,dNsum,Delta, eps,maxiter, shape)
+
+  #picm result
+  psi.new=picm$psi.new
+  conv="converged"
+  if(picm$conv==0) conv="not converged"
   
-  #impose the anchor
-  psi.new=psi.new-psi.new[k] #psi.obs is the same as psi.new;
-  
-  #back to full rank
+  #back to full rank (later)
   psi.obs=round(psi.new, maxdec)
   
   #level sets
@@ -114,7 +85,7 @@ isoph.ti=function(T, STATUS, Z, shape, K, maxiter, eps, maxdec){
   
   #for plot
   psi.obs=c(psi.obs[1],psi.obs,psi.obs[m])
-  z.obs=c(z.obs[1],z.obs,z.obs[m])
+  z.obs=c(min(z),z.obs,max(z))
   
-  return(list(est=est, conv=conv, psi=psi.obs, z=z.obs, K=K, shape=shape, iter=iter, dist=d.e, n=n, nevent=sum(STATUS), njump=m))
+  return(list(est=est, conv=conv, psi=psi.obs, z=z.obs, K=K, shape=shape, n=n, nevent=sum(STATUS), njump=m))
 }

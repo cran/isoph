@@ -4,7 +4,7 @@ isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
   oft.index=(which(START==0)-1)      #observed failure time (oft) for each subj
   oft.index=c(oft.index[-1], length(START)) #-1 for the first subj, with combining oft of the last subj
   
-  T.oft=STOP[oft.index]
+  TIME.oft=STOP[oft.index]
   STATUS.oft=STATUS[oft.index]
   Z.oft=Z[oft.index]
   n=length(STATUS.oft)
@@ -13,7 +13,7 @@ isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
 
   #sorted by z
   order.z=order(Z.oft)
-  t=T.oft[order.z]
+  t=TIME.oft[order.z]
   
     #create ZT
     t.obs=sort(unique(t))
@@ -54,49 +54,20 @@ isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
   Y2 =matrix(rpa.Y$Y2, m,nt)
     
   #initial value
-  beta.hat=coxph(Surv(START,STOP,STATUS)~Z)$coefficient  
-  if(shape=='increasing'){
-     psi= abs(beta.hat[1])*(z.obs-zk)
-  }else if(shape=='decreasing'){
-     psi=-abs(beta.hat[1])*(z.obs-zk)
-  }
+  try(beta<-coxph(Surv(START,STOP,STATUS)~Z)$coefficient, silent=T)
+  if(!is.numeric(beta)) beta=0.01
   
   #picm
-  conv="not converged"
-  iter=0
-  d.e=1
-  while(d.e>=eps){  
-    iter=iter+1
-    
-    #picm
-    dNsum=colSums(dN2)
-    Delta=rowSums(dN2)     
-    
-    den=colSums(Y2*exp(psi))
-    index.zero=which(den>0) #0/0=0
-    
-    weight=c()
-    for(s in 1:m)
-      weight[s]=sum( (Y2[s,]*dNsum/den)[index.zero] )
-    
-    if(shape=='increasing'){
-      exp.psi.new=pava(Delta/weight, weight)
-    }else if(shape=='decreasing'){
-      exp.psi.new=-pava(-Delta/weight, weight)
-    }
-    psi.new=log(exp.psi.new)    
-    
-    #distance
-    d.e=sum(abs(exp(psi.new)-exp(psi)))
-    psi=psi.new
-    if(iter>maxiter) break
-  }
-  if(d.e<eps) conv="converged"
+  dNsum=colSums(dN2)
+  Delta=rowSums(dN2)     
+  picm=picm.ft(beta,m,z.obs,zk,k, dN2,Y2,dNsum,Delta, eps,maxiter, shape)
   
-  #impose the anchor
-  psi.new=psi.new-psi.new[k] #psi.obs is the same as psi.new;
+  #picm result
+  psi.new=picm$psi.new
+  conv="converged"
+  if(picm$conv==0) conv="not converged"
   
-  #back to full rank
+  #back to full rank (later)
   psi.obs=round(psi.new, maxdec)
   
   #level sets
@@ -133,5 +104,5 @@ isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
   psi.obs=c(psi.obs[1],psi.obs,psi.obs[m])
   z.obs=c(min(Z),z.obs,max(Z))
   
-  return(list(est=est, conv=conv, psi=psi.obs, z=z.obs, K=K, shape=shape, iter=iter, dist=d.e, n=n, nevent=sum(STATUS), njump=m))
+  return(list(est=est, conv=conv, psi=psi.obs, z=z.obs, K=K, shape=shape, n=n, nevent=sum(STATUS), njump=m))
 }

@@ -7,12 +7,12 @@
 \tabular{ll}{
 Package: \tab isoph\cr
 Type: \tab Package\cr
-Version: \tab 0.3\cr
-Date: \tab 2015-11-16\cr
+Version: \tab 0.4\cr
+Date: \tab 2015-11-17\cr
 License: \tab GPL (>= 2)\cr
 }
 }
-\author{Yunro Chung, Anastasia Ivanova, Michael M. Hudgens, Jason P. Fine
+\author{Yunro Chung [cre], Anastasia Ivanova, Michael G. Hudgens and Jason P. Fine
 
 Maintainer: Yunro Chung <yunro@live.unc.edu>
 }
