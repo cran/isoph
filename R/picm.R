@@ -1,11 +1,4 @@
-picm.ft=function(beta,m,z.obs,zk,k, dN2, Y2, dNsum, Delta, eps,maxiter, shape){
-  #initial
-  if(shape=='increasing'){
-    psi= abs(beta)*(z.obs-zk)
-  }else if(shape=='decreasing'){
-    psi=-abs(beta)*(z.obs-zk)
-  }
-  
+picm.ft=function(psi,m,z.obs,zk,k, dN2, Y2, dNsum, Delta, eps,maxiter, shape){
   #picm
   iter=0
   d.e=1

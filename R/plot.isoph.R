@@ -1,16 +1,17 @@
 plot.isoph=function(x, which=1, lty=1, lcol=1, lwd=1, pch=19, pcol=1, pcex=0.7, main=NULL, ylab=NULL, xlab=NULL, lglab=NULL, lgloc=NULL, lgcex=0.9, ylim=NULL, xlim=NULL, ...){
-  y=x$psi
-  z=x$z
-  hr=exp(y)
+  y.obs=x$psi
+  z.obs=x$z
+  z.range=x$z.range
+  hr.obs=exp(y.obs)
   
-  n=length(y)
-  y.obs=y[2:(n-1)] #first and last values are not petential jump points
-  hr.obs=hr[2:(n-1)]
-  z.obs=z[2:(n-1)]
+  n=length(y.obs)
+  y=c(y.obs[1],y.obs,y.obs[n])
+  hr=c(hr.obs[1],hr.obs,hr.obs[n])
+  z=c(z.range[1],z.obs,z.range[2])
   
   if(is.null(main)) main=paste("Isotonic proportional hazards model\n(monotone ",x$shape," covariate effect)",sep="")
   if(is.null(xlab)) xlab=x$formula[[3]]
-  if(is.null(xlim)) xlim=range(z)
+  if(is.null(xlim)) xlim=z.range
   
   if(is.null(lglab)) lglab="Potential jump point"
   if(is.null(lgloc)){

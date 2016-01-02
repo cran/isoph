@@ -10,7 +10,7 @@ export(isoph, isoph)
 S3method(print, isoph, print.isoph)
 S3method(plot, isoph, plot.isoph)
 
-
+importFrom(Rcpp, evalCpp)
 
 
 

@@ -1,6 +1,6 @@
-isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10^-3, maxdec=2){
+isoph=function(formula, trt=NULL, data=NULL, shape='increasing', K=0, maxdec=2, maxiter=10^5, eps=10^-3){
   #1. load/check R packages
-
+  
   #2. check input parameters
   #2.1. Null
   if( is.null(formula) )  stop("formular is requred")
@@ -44,7 +44,7 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
   #3.1 Surv response and cov
   mf=model.frame(formula=formula, data=data) #data must be data.frame
   
-  #outcome
+  #3.2 outcome
   surv.y=model.response(mf)
   if( !(is.Surv(surv.y)) ) stop("Response must be a survival outcome")
   
@@ -56,12 +56,12 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
     START=surv.y[,1]; STOP=surv.y[,2];  STATUS=surv.y[,3]
   }
   
-  #cov
+  #3.3 cov
   Z=model.matrix(formula, data = mf, rhs = 2)
   if (ncol(Z)>=3) stop("The current version of isoph does not support multivariate explanatory variables")
   Z=Z[,2] #Z[,1] is intercept;  
   
-  #3.2. check data entry
+  #3.4 check data entry
   if(type=='ti'){
     #NA or Inf
     if ( any(is.na(TIME)+is.na(STATUS)+is.na(Z)) ) stop("Data included NA")
@@ -71,7 +71,7 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
     if( !(length(TIME)==length(STATUS) & length(STATUS)==length(Z)) ) stop("Lengths of data in the formula argument are not matched")
     
     #right censored data
-    if( min(TIME)<=0 ) stop("Time must be greater than zero")
+    if( min(TIME)<=0 ) stop("time must be greater than zero")
 
   }else if(type=='td'){
     #NA or Inf
@@ -86,16 +86,34 @@ isoph=function(formula, data=NULL, shape='increasing', K=0, maxiter=10^5, eps=10
   }
 
   #Censoring
-  if ( length(unique(STATUS))>=3 ) stop("status has to be either 0 or 1")
-  if ( !all(STATUS %in% c(0,1)) )  stop("status has to be either 0 or 1")
+  if ( length(unique(STATUS))>=3 ) stop("status must be either 0 or 1")
+  if ( !all(STATUS %in% c(0,1)) )  stop("status must be either 0 or 1")
   
   if (sum(STATUS)<=2) stop("At least more than two numbers of event are needed.")
+  
+  #3.5 X
+  if(!is.null(data))    trt=data$trt
+  
+  if(type=='ti'){
+    if(!is.null(trt)){
+      if( any(is.na(trt)) ) stop("trt included NA")
+      if( any(is.infinite(trt)) ) stop("trt included NA")
+      
+      uniq.trt=unique(trt)
+      if(length(uniq.trt)!=2)  stop("trt must be coded by 0 and 1")
+      if(min(uniq.trt)!=0)       stop("trt must be coded by 0 and 1")
+      if(max(uniq.trt)!=1)       stop("trt must be coded by 0 and 1")
+    }
+  }else if(type=='td'){
+    
+  }
 
   #4. isoph
   if(type=='ti'){
-    est=isoph.ti(TIME=TIME, STATUS=STATUS, Z=Z, shape=shape, K=K, maxiter=maxiter, eps=eps, maxdec=maxdec)
+    est=isoph.ti(TIME=TIME, STATUS=STATUS, Z=Z, X=trt, shape=shape, K=K, maxdec=maxdec, maxiter=maxiter, eps=eps)
   }else if(type=='td'){
-    est=isoph.td(START=START, STOP=STOP, STATUS=STATUS, Z=Z, shape=shape, K=K, maxiter=maxiter, eps=eps, maxdec=maxdec)
+    #est=isoph.td(START=START, STOP=STOP, STATUS=STATUS, Z=Z, X=NULL, shape=shape, K=K, maxdec=maxdec, maxiter=maxiter, eps=eps)
+    stop("interval data (ot time-dependent covariate) is not supported for the current version of the isoph function")
   }
     
   est$call=match.call()

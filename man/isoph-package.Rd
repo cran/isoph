@@ -2,13 +2,13 @@
 \alias{isoph-package}
 \docType{package}
 \title{Isotonic Proportional Hazards Model}
-\description{Nonparametric estimation of an isotonic covariate effect for Cox's partial likelihood.}
+\description{Nonparametric estimation of an isotonic covariate effect for proportional hazards model.}
 \details{
 \tabular{ll}{
 Package: \tab isoph\cr
 Type: \tab Package\cr
-Version: \tab 0.4\cr
-Date: \tab 2015-11-17\cr
+Version: \tab 0.5\cr
+Date: \tab 2016-01-01\cr
 License: \tab GPL (>= 2)\cr
 }
 }

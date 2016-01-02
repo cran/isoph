@@ -1,4 +1,4 @@
-isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
+isoph.td=function(START, STOP, STATUS, Z, X, shape, K, maxdec, maxiter, eps){
 
   #data set with observed failure time
   oft.index=(which(START==0)-1)      #observed failure time (oft) for each subj
@@ -54,18 +54,63 @@ isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
   Y2 =matrix(rpa.Y$Y2, m,nt)
     
   #initial value
-  try(beta<-coxph(Surv(START,STOP,STATUS)~Z)$coefficient, silent=T)
-  if(!is.numeric(beta)) beta=0.01
+  try(beta.hat<-coxph(Surv(START,STOP,STATUS)~Z)$coefficient, silent=T)
+  if(!is.numeric(beta.hat)) beta.hat=0.01
+
+  if(shape=='increasing'){;       psi= abs(beta.hat)*(z.obs-zk)
+  }else if(shape=='decreasing'){; psi=-abs(beta.hat)*(z.obs-zk);  }  
   
   #picm
   dNsum=colSums(dN2)
   Delta=rowSums(dN2)     
-  picm=picm.ft(beta,m,z.obs,zk,k, dN2,Y2,dNsum,Delta, eps,maxiter, shape)
+
+  #interval (RPA)
+  int=list()
+  int[[1]]=c(-Inf,z.obs[2])
+  int[[m]]=c(z.obs[m],Inf)
+  for(i in 2:(m-1))
+    int[[i]]=c(z.obs[i],z.obs[i+1])
+  
+  #picm & beta for newton raphson algo
+  iter=0;  dist=1;  beta=0
+
+  if(is.null(X)){ #no trt group  
+    dist=0; exp.beta=NA
+    picm=picm.ft(psi,m,z.obs,zk,k, dN2,Y2,dNsum,Delta, eps,maxiter, shape)
+    if(picm$conv==0) stop
+    psi.new=picm$psi.new
+  }else{
+    iter=0;  dist=1;  beta=0  
+    
+    X.oft=X[oft.index]
+    x=X.oft[order.z]
+    while(dist>=eps){  
+      iter=iter+1
+      if(iter>maxiter) break   
+    
+      #estimate psi
+      picm=picm.ft(psi,m,z.obs,zk,k, dN2,Y2,dNsum,Delta, eps,maxiter, shape)
+      if(picm$conv==0) stop
+      psi.new=picm$psi.new
+      psi.full=BTFft(m, n, int, z, psi.new)    
+      
+      #estimate beta (Y1&x1 or Y2&x2 should be the same);
+      beta.new=NR.ft(x,beta,psi.full,n,nt,Y,dN)
+      
+      #update;
+      dist=sqrt(sum(psi.new-psi)^2)+(beta.new-beta)^2
+      
+      psi=psi.new
+      beta=beta.new
+    }
+    exp.beta=round(exp(beta.new), maxdec)
+    exp.beta=formatC( exp.beta, format='f', digits=maxdec)    
+  }
   
   #picm result
-  psi.new=picm$psi.new
   conv="converged"
-  if(picm$conv==0) conv="not converged"
+  if(dist>=eps) conv="not converged"  
+
   
   #back to full rank (later)
   psi.obs=round(psi.new, maxdec)
@@ -100,9 +145,7 @@ isoph.td=function(START, STOP, STATUS, Z, shape, K, maxiter, eps, maxdec){
   est=data.frame(psi.hat=psi.hat, HR.hat=HR.hat, lv.set=lv.sets)
   names(est)=c("psi.hat","exp(psi.hat)","level set of psi.hat")
   
-  #for plot
-  psi.obs=c(psi.obs[1],psi.obs,psi.obs[m])
-  z.obs=c(min(Z),z.obs,max(Z))
+  z.range=range(Z)
   
-  return(list(est=est, conv=conv, psi=psi.obs, z=z.obs, K=K, shape=shape, n=n, nevent=sum(STATUS), njump=m))
+  return(list(est=est, exp.beta=exp.beta, conv=conv, psi=psi.obs, z=z.obs, z.range=z.range, K=K, shape=shape, n=n, nevent=sum(STATUS), njump=m))
 }
