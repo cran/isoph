@@ -1,16 +1,16 @@
 Package: isoph
-Title: Isotonic Proportional Hazards Model
 Type: Package
-Version: 0.5
-Date: 2016-01-01
+Title: Isotonic Proportional Hazards Model
+Version: 1.0
+Date: 2017-04-25
 Author: Yunro Chung [cre], Anastasia Ivanova, Michael G. Hudgens and Jason P. Fine
-Maintainer: Yunro Chung <yunro@live.unc.edu>
-Description: Nonparametric estimation of an isotonic covariate effect for proprotional hazards model.
-Imports: Rcpp (>= 0.12.1)
+Maintainer: Yunro Chung <ychung@fredhutch.org>
+Description: Nonparametric estimation of an isotonic covariate effect for proportional hazards model.
 Depends: R (>= 3.0.2), Iso, survival
 License: GPL (>= 2)
-LinkingTo: Rcpp
-Packaged: 2016-01-02 00:39:33 UTC; roy
-NeedsCompilation: yes
+Encoding: UTF-8
+LazyData: true
+NeedsCompilation: no
+Packaged: 2017-04-26 06:38:37 UTC; roy
 Repository: CRAN
-Date/Publication: 2016-01-02 16:09:20
+Date/Publication: 2017-04-26 17:29:38 UTC

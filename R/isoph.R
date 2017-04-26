@@ -71,7 +71,7 @@ isoph=function(formula, trt=NULL, data=NULL, shape='increasing', K=0, maxdec=2, 
     if( !(length(TIME)==length(STATUS) & length(STATUS)==length(Z)) ) stop("Lengths of data in the formula argument are not matched")
     
     #right censored data
-    if( min(TIME)<=0 ) stop("time must be greater than zero")
+    if( min(TIME)<0 ) stop("time must be greater than zero")
 
   }else if(type=='td'){
     #NA or Inf
@@ -91,18 +91,17 @@ isoph=function(formula, trt=NULL, data=NULL, shape='increasing', K=0, maxdec=2, 
   
   if (sum(STATUS)<=2) stop("At least more than two numbers of event are needed.")
   
-  #3.5 X
+  #3.5 W (or trt)
   if(!is.null(data))    trt=data$trt
-  
+
   if(type=='ti'){
     if(!is.null(trt)){
-      if( any(is.na(trt)) ) stop("trt included NA")
-      if( any(is.infinite(trt)) ) stop("trt included NA")
       
-      uniq.trt=unique(trt)
-      if(length(uniq.trt)!=2)  stop("trt must be coded by 0 and 1")
-      if(min(uniq.trt)!=0)       stop("trt must be coded by 0 and 1")
-      if(max(uniq.trt)!=1)       stop("trt must be coded by 0 and 1")
+      if( any(is.na(trt)) ) stop("w included NA")
+      if( any(is.infinite(trt)) ) stop("w included NA")
+      if( !is.numeric(trt) ) stop("w must be numeric")
+      unq.trt=sort(unique(c(trt)))
+      if( sum(abs(unq.trt - (0:(length(unq.trt)-1)))) >0 ) stop("trt must be coded by 0 and 1")
     }
   }else if(type=='td'){
     
@@ -113,9 +112,9 @@ isoph=function(formula, trt=NULL, data=NULL, shape='increasing', K=0, maxdec=2, 
     est=isoph.ti(TIME=TIME, STATUS=STATUS, Z=Z, X=trt, shape=shape, K=K, maxdec=maxdec, maxiter=maxiter, eps=eps)
   }else if(type=='td'){
     #est=isoph.td(START=START, STOP=STOP, STATUS=STATUS, Z=Z, X=NULL, shape=shape, K=K, maxdec=maxdec, maxiter=maxiter, eps=eps)
-    stop("interval data (ot time-dependent covariate) is not supported for the current version of the isoph function")
+    stop("time-depdent cov is not supported for the current version of the isoph function")
   }
-    
+
   est$call=match.call()
   est$formula=formula
   

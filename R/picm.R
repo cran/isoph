@@ -17,6 +17,9 @@ picm.ft=function(psi,m,z.obs,zk,k, dN2, Y2, dNsum, Delta, eps,maxiter, shape){
     if(sum(is.na(weight))+sum(is.infinite(weight))>=1)
       break;
     
+    if(min(weight)==0) #For trt only: Y2[,s] can be zero due to x*beta is zero
+      break;
+    
     if(shape=='increasing'){
       exp.psi.new=pava(Delta/weight, weight)
     }else if(shape=='decreasing'){

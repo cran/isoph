@@ -3,9 +3,9 @@ print.isoph=function(x, ...){
   print(x$call)
   cat("\nEstimated monotone function, hazard ratio and level set:\n")
   print(x$est)
-  if(!is.na(x$exp.beta)){
-    a1.0=paste("\n exp(beta): ",x$exp.beta,"\n",sep='')
-    cat(a1.0)
+  if(sum(!is.na(x$exp.beta))){
+      a1.0=paste("\n exp(beta): ",c(x$exp.beta),"\n",sep='')
+      cat(a1.0)
   }
 
   a1.1=paste("\nNumber of events/subjects was ",x$nevent,"/",x$n,".",sep='')
