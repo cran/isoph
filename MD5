@@ -1,13 +1,13 @@
-e57ff194279542d1e2b22ab13a93646c *DESCRIPTION
+a01b6dbb4a60cfb156f932fa1be690af *DESCRIPTION
 cb741fb53816c6a88e744f44122f138a *NAMESPACE
 166f9b57d395d784a8821579c073e53b *R/BTF.R
 cd8935b173855fc5e2ffcab4e4b69f48 *R/NR1.R
 cfcb63afb9511fcfe3e63037920fdfc4 *R/NR2.R
 6743dcbe7e327f5e52eec1cfd0e59926 *R/RPA_ti.R
 a2f0640751be39fdbd8ffdccaa2a0f03 *R/isoph.R
-c8233cc27fb099662d173c9720eb41d9 *R/isoph.ti.R
+7d0d96be879af1e5894d3bac5f878a2d *R/isoph.ti.R
 2ca41849acc8914c42a47244ec4c5036 *R/picm.R
 a46abadcada2d3cb4c5009d63fe345bb *R/plot.isoph.R
 fb6d2ac922add3cd8bec9353a14c837b *R/print.isoph.R
-f9e04d8a0cc920d74a60a2f9ef3a6574 *man/isoph-package.Rd
+2d8e3639339f9df51484acc4913e8808 *man/isoph-package.Rd
 c32ac8a4c605f623c342d1e05a2d5cd1 *man/isoph.Rd

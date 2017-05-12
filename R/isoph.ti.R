@@ -3,16 +3,15 @@ isoph.ti=function(TIME, STATUS, Z, X, shape, K, maxdec, maxiter, eps){
 
   #sorted by z
   n=length(STATUS)
-  order.z=order(Z)
-  t=TIME[order.z]
-  status=STATUS[order.z]
-  z=sort(Z)
+  data=data.frame(TIME,STATUS,Z)
   if(!is.null(X)){
+    data=data.frame(TIME,STATUS,Z,X)
     nparm=1; if(!is.vector(X)) nparm=ncol(X)
-    if(nparm>1){; x=X[order.z,]; NR.ft=NR2.ft
-    }else{;       x=X[order.z]; NR.ft=NR1.ft
+    if(nparm>1){; NR.ft=NR2.ft
+    }else{;       NR.ft=NR1.ft
     }
   }
+  data=data[order(data$Z),]
 
   if(shape=='increasing'){
     RPA_ti=RPA_ti_inc;
@@ -25,24 +24,25 @@ isoph.ti=function(TIME, STATUS, Z, X, shape, K, maxdec, maxiter, eps){
   #remove subjects whose cov is less than z^*_(1)
   n.total=n
   if(shape=='increasing'){
-    if(sum(status[z==z[1]])==0){
+    if(sum(data$STATUS[data$Z==data$Z[1]])==0){
       idx=which(status==1)[1]
       idx2=idx:n;      n=length(idx2)
     }
   }else{
-    if(sum(status[z==z[n]])==0){
-      idx=tail(which(status==1),1)
+    if(sum(data$STATUS[data$Z==data$Z[n]])==0){
+      idx=tail(which(data$STATUS==1),1)
       idx2=1:idx;      n=length(idx2)
     }
   }
-  if(n.total>n){
-    t=t[idx2]
-    status=status[idx2]
-    z=z[idx2]
-    if(!is.null(X)){
-      if(nparm>1){; x=X[idx2,]
-      }else{;       x=X[idx2]
-      }
+  if(n.total>n)  data=data[idx2,]
+
+  #re-define variable
+  t=data$TIME
+  status=data$STATUS
+  z=data$Z
+  if(!is.null(X)){
+    if(nparm==1){ x=as.numeric(data[,4])
+    }else{;       x=as.matrix(data[,-c(1,2,3)])
     }
   }
 
@@ -183,6 +183,7 @@ isoph.ti=function(TIME, STATUS, Z, X, shape, K, maxdec, maxiter, eps){
   HR.hat=formatC( unique(exp(psi.obs)), format='f', digits=maxdec)
   #recover if status[1]=0 associated with z(1)
   if(n.total>n){
+    n=n.total
     if(shape=='increasing'){
       psi.hat=c(-Inf,psi.hat)
       HR.hat=c(0,HR.hat)
