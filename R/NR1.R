@@ -17,7 +17,6 @@ NR1.ft=function(x,beta,psi.full,n,nt,Y,dN, maxiter,eps){
         S0=sum(Yest)
         S1=sum(Yest*x)
         S2=sum(Yest*x^2)
-        S2=S1^2
         E1=S1/S0
 
         U=U+(x[i]-E1)*dN[i,j]

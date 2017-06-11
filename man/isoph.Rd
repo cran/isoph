@@ -13,7 +13,7 @@
   \item{shape}{direction of the covariate effect on the hazard function, "increasing" or "decreasing".}
   \item{K}{an anchor constraint is imposed at K(default is 0).}
   \item{maxdec}{maximum number of decisimal for output (default is 2).}  
-  \item{maxiter}{maximum number of iteration (default is 10^5).}
+  \item{maxiter}{maximum number of iteration (default is 10^4).}
   \item{eps}{stopping convergence criteria (default is 10^-3).}
 }
 \details{The isoph function allows to analyze isotonic proportional hazards model, defined as
@@ -54,9 +54,9 @@ plot(res1, which=2) #which=2 for hazard ratio, i.e. exp(psi.hat)
 # 2.1. create a test data set 1
 test2=list(
   time=  c(2, 5, 1, 7, 9, 5, 3, 6, 8, 9, 7, 4, 5, 2, 8),
-  status=c(0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1),
+  status=c(0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1),
   z=     c(2, 1, 1, 3, 5, 6, 7, 9, 3, 0, 2, 7, 3, 9, 4),
-  trt=   c(1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0)
+  trt=   c(1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0)
 )
 
 # 2.2. Fit isotonic proportional hazards model
