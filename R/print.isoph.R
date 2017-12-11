@@ -14,7 +14,7 @@ print.isoph=function(x, ...){
   cat(a1.1)
   cat(a1.2)
   cat(a1.3)
-  
+
   if(x$conv=="converged"){
     a2=paste("\n\nAlgorithm was ",x$conv,".\n",sep='')
   }else if(x$conv=="not converged"){
@@ -22,5 +22,3 @@ print.isoph=function(x, ...){
   }
   cat(a2)
 }
-
-

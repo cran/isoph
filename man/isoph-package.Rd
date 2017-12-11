@@ -7,8 +7,8 @@
 \tabular{ll}{
 Package: \tab isoph\cr
 Type: \tab Package\cr
-Version: \tab 1.1.1\cr
-Date: \tab 2017-06-11\cr
+Version: \tab 1.1.2\cr
+Date: \tab 2017-12-11\cr
 License: \tab GPL (>= 2)\cr
 }
 }
@@ -16,5 +16,5 @@ License: \tab GPL (>= 2)\cr
 
 Maintainer: Yunro Chung <ychung@fredhutch.org>
 }
-\references{Yunro Chung, Anastasia Ivanova, Michael M. Hudgens, Jason P. Fine, Partial likelihood estimation of isotonic proportional hazards models, Biometrika (accepted).}
+\references{Yunro Chung, Anastasia Ivanova, Michael M. Hudgens, Jason P. Fine, Partial likelihood estimation of isotonic proportional hazards models, Biometrika. In print.}
 \keyword{Isotonic regression, Survival analysis, Constrained estimation}
